@@ -5,16 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BookingSlotDto {
-	Date startTime;
-	Date endTime;
-	int duration;
-	int roomId;
-	boolean maintenanceSlot;
+public class Moment {
+	int hour;
+	int min;
+
+	@Override public String toString() {
+		return "momentDto{" +
+				"hour='" + hour + '\'' +
+				", min='" + min + '\'' +
+				'}';
+	}
 }

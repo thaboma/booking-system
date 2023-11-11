@@ -36,10 +36,23 @@ public class ConferenceRoom implements Serializable {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		ConferenceRoom that = (ConferenceRoom) o;
-		return capacity == that.capacity;
+		return capacity == that.capacity && Objects.equals(id, that.id) && Objects.equals(name, that.name);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(capacity);
+		return Objects.hash(id, name, capacity);
 	}
+
+//	@Override public boolean equals(Object o) {
+//		if (this == o)
+//			return true;
+//		if (o == null || getClass() != o.getClass())
+//			return false;
+//		ConferenceRoom that = (ConferenceRoom) o;
+//		return capacity == that.capacity;
+//	}
+//
+//	@Override public int hashCode() {
+//		return Objects.hash(capacity);
+//	}
 }

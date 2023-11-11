@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Set;
 
 @RestController
-@RequestMapping("api/v1/booking")
+@RequestMapping("api/v1/bookings")
 @CrossOrigin("*")
 @Slf4j
 public class BookingController {
@@ -26,12 +26,24 @@ public class BookingController {
 	@Autowired
 	private BookingService bookingService;
 
+//	@PostMapping("/reserve-room")
+//	public ResponseEntity<Void> bookConferenceRoom(@Validated @RequestBody BookingRequest bookingRequest) {
+//		bookingService.bookConferenceRoom(bookingRequest);
+//
+//		log.info("Conference room has been successfully reserved by {} for a slot from [{}] to [{}]  ", bookingRequest.getUserId(), bookingRequest.getStartTime(), bookingRequest.getEndTime());
+//		return new ResponseEntity<>(HttpStatus.OK);
+//	}
+
 	@PostMapping("/reserve-room")
 	public ResponseEntity<Void> bookConferenceRoom(@Validated @RequestBody BookingRequest bookingRequest) {
-		bookingService.bookConferenceRoom(bookingRequest);
-
-		log.info("Conference room has been successfully reserved by {} for a slot from [{}] to [{}]  ", bookingRequest.getUserId(), bookingRequest.getStartTime(), bookingRequest.getEndTime());
-		return new ResponseEntity<>(HttpStatus.OK);
+		try {
+			bookingService.bookConferenceRoom(bookingRequest);
+			log.info("Conference room has been successfully reserved by {} for a slot from [{}] to [{}]  ", bookingRequest.getUserId(), bookingRequest.getStartTime(), bookingRequest.getEndTime());
+			return new ResponseEntity<>(HttpStatus.OK);
+		}catch (Exception ex){
+			log.error("User {} failed to reserve for a slot from [{}] to [{}]  ", bookingRequest.getUserId(), bookingRequest.getStartTime(), bookingRequest.getEndTime());
+			return new ResponseEntity(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@PostMapping("/list-room")
