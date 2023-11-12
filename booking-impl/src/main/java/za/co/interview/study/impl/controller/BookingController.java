@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import za.co.interview.study.impl.dto.BookingRequest;
+import org.springframework.web.client.HttpClientErrorException;
+import za.co.interview.study.impl.dto.BookingRequestDto;
 import za.co.interview.study.impl.dto.ConferenceRoomDto;
-import za.co.interview.study.impl.dto.ListRoomsRequest;
+import za.co.interview.study.impl.dto.ListRoomsRequestDto;
 import za.co.interview.study.impl.dto.ListRoomsResponseDto;
 import za.co.interview.study.impl.service.BookingService;
+import za.co.interview.study.impl.util.HelperUtil;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,34 +28,30 @@ public class BookingController {
 	@Autowired
 	private BookingService bookingService;
 
-//	@PostMapping("/reserve-room")
-//	public ResponseEntity<Void> bookConferenceRoom(@Validated @RequestBody BookingRequest bookingRequest) {
-//		bookingService.bookConferenceRoom(bookingRequest);
-//
-//		log.info("Conference room has been successfully reserved by {} for a slot from [{}] to [{}]  ", bookingRequest.getUserId(), bookingRequest.getStartTime(), bookingRequest.getEndTime());
-//		return new ResponseEntity<>(HttpStatus.OK);
-//	}
-
 	@PostMapping("/reserve-room")
-	public ResponseEntity<Void> bookConferenceRoom(@Validated @RequestBody BookingRequest bookingRequest) {
+	public ResponseEntity<Void> bookConferenceRoom(@Validated @RequestBody BookingRequestDto bookingRequestDto) {
 		try {
-			bookingService.bookConferenceRoom(bookingRequest);
-			log.info("Conference room has been successfully reserved by {} for a slot from [{}] to [{}]  ", bookingRequest.getUserId(), bookingRequest.getStartTime(), bookingRequest.getEndTime());
+			HelperUtil.checkForMinCapacity(bookingRequestDto.getNumOfAttendees());
+			bookingService.bookConferenceRoom(bookingRequestDto);
+			log.info("Conference room has been successfully reserved by {} for a slot from [{}] to [{}]  ", bookingRequestDto.getUserId(), bookingRequestDto.getStartTime(), bookingRequestDto.getEndTime());
 			return new ResponseEntity<>(HttpStatus.OK);
 		}catch (Exception ex){
-			log.error("User {} failed to reserve for a slot from [{}] to [{}]  ", bookingRequest.getUserId(), bookingRequest.getStartTime(), bookingRequest.getEndTime());
+			if (ex instanceof HttpClientErrorException){
+				return new ResponseEntity(ex.getMessage(),HttpStatus.BAD_REQUEST);
+			}
+			log.error("User {} failed to reserve for a slot from [{}] to [{}]  ", bookingRequestDto.getUserId(), bookingRequestDto.getStartTime(), bookingRequestDto.getEndTime());
 			return new ResponseEntity(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@PostMapping("/list-room")
-	public ResponseEntity<Set<ConferenceRoomDto>> listConferenceRooms(@Validated @RequestBody ListRoomsRequest listRoomsRequest) {
-		Collection<ListRoomsResponseDto> conferenceRoomDtos = bookingService.listConferenceRooms(listRoomsRequest);
+	public ResponseEntity<Set<ConferenceRoomDto>> listConferenceRooms(@Validated @RequestBody ListRoomsRequestDto listRoomsRequestDto) {
+		Collection<ListRoomsResponseDto> conferenceRoomDtos = bookingService.listConferenceRooms(listRoomsRequestDto);
 
 		if (!CollectionUtils.isEmpty(conferenceRoomDtos)) {
-			log.info("Successfully retrieved {} conference rooms by for the period between {} and {}  ", conferenceRoomDtos.size(), listRoomsRequest.getStartTime(), listRoomsRequest.getEndTime());
+			log.info("Successfully retrieved {} conference rooms by for the period between {} and {}  ", conferenceRoomDtos.size(), listRoomsRequestDto.getStartTime(), listRoomsRequestDto.getEndTime());
 		} else {
-			log.info("No conference rooms found for the given period between {} and {}  ", listRoomsRequest.getStartTime(), listRoomsRequest.getEndTime());
+			log.info("No conference rooms found for the given period between {} and {}  ", listRoomsRequestDto.getStartTime(), listRoomsRequestDto.getEndTime());
 		}
 
 		return new ResponseEntity(Collections.singleton(conferenceRoomDtos), HttpStatus.OK);

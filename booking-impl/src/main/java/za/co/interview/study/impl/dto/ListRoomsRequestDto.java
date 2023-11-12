@@ -12,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ListRoomsRequest {
+public class ListRoomsRequestDto {
 	@NotNull
 	Instant startTime;
 	@NotNull

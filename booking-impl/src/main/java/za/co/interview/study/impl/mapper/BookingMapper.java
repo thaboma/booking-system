@@ -6,7 +6,10 @@ import za.co.interview.study.impl.dto.ListRoomsResponseDto;
 import za.co.interview.study.impl.entity.BookingSlot;
 import za.co.interview.study.impl.entity.ConferenceRoom;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BookingMapper {

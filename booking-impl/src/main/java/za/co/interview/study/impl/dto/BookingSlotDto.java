@@ -15,6 +15,6 @@ public class BookingSlotDto {
 	Date startTime;
 	Date endTime;
 	int duration;
-	int roomId;
+	long roomId;
 	boolean maintenanceSlot;
 }

@@ -11,12 +11,12 @@ import java.time.temporal.ChronoUnit;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingRequest extends ListRoomsRequest {
+public class BookingRequestDto extends ListRoomsRequestDto {
 
 	String userId;
 	int numOfAttendees;
 
-	public BookingRequest(@NotNull Instant startTime, @NotNull Instant endTime) {
+	public BookingRequestDto(@NotNull Instant startTime, @NotNull Instant endTime) {
 		super(startTime, endTime);
 	}
 

@@ -1,4 +1,4 @@
-package za.co.interview.study.impl.impl;
+package za.co.interview.study.impl.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BookingSlot {
+public class MaintenanceSlotDto {
 	Instant startTime;
-	int duration;
+	Instant endTime;
 }

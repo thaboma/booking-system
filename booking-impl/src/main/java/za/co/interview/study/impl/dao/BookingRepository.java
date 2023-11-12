@@ -13,11 +13,7 @@ public interface BookingRepository extends JpaRepository<ConferenceRoom, Long> {
 
 	@Query("FROM ConferenceRoom AS c "
 		+ " LEFT JOIN FETCH c.bookingSlots AS s "
-		+ " WHERE s.startTime >= ?1 AND s.endTime <= ?2 "
-//		+ " AND s.createdTime IS NULL "
-//	    + " OR s.maintenanceSlot =true "
-//		+ " ORDER BY c.capacity "
-	)
+		+ " WHERE s.startTime >= ?1 AND s.endTime <= ?2 ")
 	Set<ConferenceRoom> findConferenceRoomsByBookingSlotsBetween(Date startDate, Date endDate);
 
 	@Query("FROM ConferenceRoom AS c "
@@ -25,13 +21,11 @@ public interface BookingRepository extends JpaRepository<ConferenceRoom, Long> {
 	Set<ConferenceRoom> findAllConferenceRooms();
 
 
-//	@Query("FROM ConferenceRoom AS c "
-//			+ " LEFT JOIN FETCH c.bookingSlots AS s "
-//			+ " WHERE s.maintenanceSlot =true "
-////		+ " AND s.createdTime IS NULL "
-//	    + " OR s.maintenanceSlot =true "
-////		+ " ORDER BY c.capacity "
-//	Set<ConferenceRoom> findAllConferenceRooms();
+	@Query("FROM ConferenceRoom AS c "
+			+ " LEFT JOIN FETCH c.bookingSlots AS s "
+			+ " WHERE s.startTime >= ?1 AND s.endTime <= ?2 "
+	       + " OR s.maintenanceSlot =true ")
+	Set<ConferenceRoom> findAllConferenceRoomsByDates(Date startDate, Date endDate);
 
 	@Query(value="select max(capacity) from conference_room ", nativeQuery = true)
 	int getMaxCapacity();
