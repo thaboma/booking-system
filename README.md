@@ -1,4 +1,4 @@
-# Conference room boooking-system
+# Conference room booking-system
 
 Steps to run the application.
 * Fetch the application for this repository.
