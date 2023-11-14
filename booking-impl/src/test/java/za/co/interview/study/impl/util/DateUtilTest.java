@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 import za.co.interview.study.impl.BaseTestCase;
-import za.co.interview.study.impl.dto.BookingSlotDto;
 import za.co.interview.study.impl.dto.Interval;
 import za.co.interview.study.impl.dto.Moment;
 
@@ -14,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -102,21 +100,5 @@ class DateUtilTest extends BaseTestCase {
 
 		boolean overlap =DateUtil.isThereOverlap(slotDto,startDate,endDate);
 		Assert.isTrue(!overlap, "This should is an overlapping period ");
-	}
-
-	@Test
-	void isMantenanaceSlot() {
-		Calendar calender = Calendar.getInstance();
-		calender.set(Calendar.MINUTE, 15);
-		calender.set(Calendar.SECOND, 0);
-		calender.set(Calendar.MILLISECOND, 0);
-
-		Date st=calender.getTime();
-		calender.set(Calendar.MINUTE, 30);
-		Date ed=calender.getTime();
-
-		BookingSlotDto slotDto =BookingSlotDto.builder().startTime(st).endTime(ed).build();
-		boolean coincides=DateUtil.isMaintenanceSlot(slotDto,st.toInstant(),ed.toInstant());
-		Assert.isTrue(coincides, "This should be the same slot ");
 	}
 }

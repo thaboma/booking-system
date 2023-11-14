@@ -71,9 +71,6 @@ public class BookingServiceImpl implements BookingService {
 		// Booking can be done only in intervals of 15 mins,
 		DateUtil.validateInterval(startTime, endTime);
 
-		//Check if the selected period coincides with one of the maintenance slots
-		checkForMaintenanceSlot(startTime, endTime);
-
 		//Check if the selected period overlaps with at least one of the maintenance slots
 		checkForMaintenanceSlotOverlaps(startTime, endTime);
 
@@ -102,13 +99,6 @@ public class BookingServiceImpl implements BookingService {
 		Interval slot=HelperUtil.checkForOverlaps(bookedIntervals, startTime, endTime);
 		if (ObjectUtils.isNotEmpty(slot)){
 			throw new ValidationException("The selected period overlaps with one of the maintenance slots  ");
-		}
-	}
-
-	private void checkForMaintenanceSlot(Instant startTime, Instant endTime) {
-		BookingSlotDto maintenanceSlot =HelperUtil.checkForMaintenanceSlot(maintenanceSlots, startTime, endTime);
-		if (ObjectUtils.isNotEmpty(maintenanceSlot)){
-			throw new ValidationException("The selected period coincides with one of the maintenance slots  ");
 		}
 	}
 

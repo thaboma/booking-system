@@ -2,7 +2,6 @@ package za.co.interview.study.impl.util;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-import za.co.interview.study.impl.dto.BookingSlotDto;
 import za.co.interview.study.impl.dto.Interval;
 import za.co.interview.study.impl.mapper.BookingMapper;
 
@@ -16,10 +15,6 @@ public class HelperUtil {
 		return BookingMapper.emptyIfNull(bookingSlots).parallelStream().filter(s -> DateUtil.isThereOverlap(s, startTime, endTime)).findFirst().orElse(null);
 	}
 
-	public static BookingSlotDto checkForMaintenanceSlot(Set<BookingSlotDto> bookingSlots, Instant startTime, Instant endTime) {
-		BookingSlotDto slot = BookingMapper.emptyIfNull(bookingSlots).parallelStream().filter(s -> DateUtil.isMaintenanceSlot(s, startTime, endTime)).findFirst().orElse(null);
-		return slot;
-	}
 	public static void checkForMinCapacity(int capacity) {
 		if (capacity <= 1) {
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST,"The number of people allowed for booking a room should be greater than 1 ");

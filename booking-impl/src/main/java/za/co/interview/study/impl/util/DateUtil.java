@@ -1,6 +1,5 @@
 package za.co.interview.study.impl.util;
 
-import za.co.interview.study.impl.dto.BookingSlotDto;
 import za.co.interview.study.impl.dto.Interval;
 import za.co.interview.study.impl.dto.Moment;
 
@@ -9,7 +8,6 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 
 public class DateUtil {
@@ -108,49 +106,6 @@ public class DateUtil {
 		boolean result  =  endsBeforeStart && startBeforeEnd;
 
 		return result;
-	}
-
-	/** The method takes a Booking slot object that represents a slot to be booked on a diary and then checks that slot to see
-	 * if it coincide with the given starDate and endDate , representing the start and end of slot or an interval that we are looking to reserve
-	 * and return a boolean to signify if the Date times given coincides with a given slot or not
-	 *
-	 * @param bookingSlot - This is the booking slot that we are checking against the given startDate and endDate
-	 * @param startDate - The start of the potential slot to be reserved
-	 * @param endDate- The start of the potential slot to be reserved
-	 * @return -A boolean to signify if the Date times given coincides with a given slot or not
-	 */
-	public static boolean isMaintenanceSlot(BookingSlotDto bookingSlot, Instant startDate, Instant endDate) {
-
-		Interval firstInterval = new Interval();
-		Moment firstBookedMoment = getMomentFromDate(bookingSlot.getStartTime());
-		Moment secondBookedMoment = getMomentFromDate(bookingSlot.getEndTime());
-		firstInterval.setBegin(firstBookedMoment);
-		firstInterval.setEnd(secondBookedMoment);
-
-		Interval secondInterval = new Interval();
-		Moment firstRequestedMoment = getMomentFromInstant(startDate);
-		Moment secondRequestedMoment = getMomentFromInstant(endDate);
-		secondInterval.setBegin(firstRequestedMoment);
-		secondInterval.setEnd(secondRequestedMoment);
-
-		Comparator<Moment> capacityComparator = Comparator.comparing(Moment::toString, Comparator.nullsFirst(Comparator.naturalOrder()));
-
-		int isSameStart = capacityComparator.compare(firstInterval.getBegin(), secondInterval.getBegin()) ;
-		int isSameEnd = capacityComparator.compare(firstInterval.getEnd(), secondInterval.getEnd());
-		boolean result = (isSameStart==0) && (isSameEnd==0);
-
-		return result;
-	}
-
-		private static Moment getMomentFromDate(Date date){
-		int hours = date.toInstant().atZone(ZoneOffset.UTC).getHour();
-		int minutes = date.toInstant().atZone(ZoneOffset.UTC).getMinute();
-
-		return Moment
-				.builder()
-				.hour(hours)
-				.min(minutes)
-				.build();
 	}
 
 	private static Moment getMomentFromInstant(Instant instant){
