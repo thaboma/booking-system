@@ -19,4 +19,10 @@ public class Moment {
 				", min='" + min + '\'' +
 				'}';
 	}
+
+	public int getValue() {
+		String hr= (hour <10) ? "0"+hour : String.valueOf(hour);
+		String minute= (min <10) ? "0"+min : String.valueOf(min);
+		return Integer.parseInt(String.valueOf(String.format("%s%s",hr,minute)));
+	}
 }

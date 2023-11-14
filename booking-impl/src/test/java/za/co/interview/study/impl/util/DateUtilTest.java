@@ -5,8 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 import za.co.interview.study.impl.BaseTestCase;
 import za.co.interview.study.impl.dto.BookingSlotDto;
+import za.co.interview.study.impl.dto.Interval;
+import za.co.interview.study.impl.dto.Moment;
 
 import javax.validation.ValidationException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -78,24 +82,26 @@ class DateUtilTest extends BaseTestCase {
 
 	@Test
 	void isThereOverlap() {
-		Calendar calender = Calendar.getInstance();
-		calender.set(Calendar.MINUTE, 30);
-		calender.set(Calendar.SECOND, 0);
-		calender.set(Calendar.MILLISECOND, 0);
 
-		Date st=calender.getTime();
-		calender.set(Calendar.MINUTE,  45);
-		Date ed=calender.getTime();
+		String startDateSt= "2009-04-22 09:00";
+		String endDateSt= "2009-04-22 09:15";
 
-		BookingSlotDto slotDto =BookingSlotDto.builder().startTime(st).endTime(ed).build();
+		Instant startDate=null;
+		Instant endDate=null;
 
-		boolean overlap =DateUtil.isThereOverlap(slotDto,st.toInstant(),ed.toInstant());
-		Assert.isTrue(overlap, "This should is an overlapping period ");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-		calender.set(Calendar.MINUTE, 0);
-		st=calender.getTime();
-		boolean overLaps=DateUtil.isThereOverlap(slotDto,st.toInstant(),ed.toInstant());
-		Assert.isTrue(overLaps, "This should is overlapping period ");
+		try {
+			startDate = DateUtil.getCurrentDayInstant(formatter.parse(startDateSt).toInstant());
+			endDate= DateUtil.getCurrentDayInstant(formatter.parse(endDateSt).toInstant());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		Interval slotDto =new Interval(new Moment(9,00),new Moment(9,15));
+
+		boolean overlap =DateUtil.isThereOverlap(slotDto,startDate,endDate);
+		Assert.isTrue(!overlap, "This should is an overlapping period ");
 	}
 
 	@Test

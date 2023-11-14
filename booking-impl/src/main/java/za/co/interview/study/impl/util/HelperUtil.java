@@ -3,6 +3,7 @@ package za.co.interview.study.impl.util;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import za.co.interview.study.impl.dto.BookingSlotDto;
+import za.co.interview.study.impl.dto.Interval;
 import za.co.interview.study.impl.mapper.BookingMapper;
 
 import javax.validation.ValidationException;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 public class HelperUtil {
 
-	public static BookingSlotDto checkForOverlaps(Set<BookingSlotDto> bookingSlots, Instant startTime, Instant endTime) {
+	public static Interval checkForOverlaps(Set<Interval> bookingSlots, Instant startTime, Instant endTime) {
 		return BookingMapper.emptyIfNull(bookingSlots).parallelStream().filter(s -> DateUtil.isThereOverlap(s, startTime, endTime)).findFirst().orElse(null);
 	}
 

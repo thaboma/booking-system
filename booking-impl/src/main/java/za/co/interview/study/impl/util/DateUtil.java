@@ -87,18 +87,14 @@ public class DateUtil {
 	 * if it overlaps with the given starDate and endDate , representing the start and end of slot or an interval that we are looking to reserve
 	 * and return a boolean to signify if the Date times given overlaps with a given slot or not
 	 *
-	 * @param bookingSlot - This is the booking slot that we are checking against the given startDate and endDate
+	 * @param maintenanceInterval - This is the interval for maintenance slot that we are checking against the given startDate and endDate
 	 * @param startDate - The start of the potential slot to be reserved
 	 * @param endDate- The start of the potential slot to be reserved
 	 * @return -A boolean to signify if the Date times given overlaps with a given slot or not
 	 */
-	public static boolean isThereOverlap(BookingSlotDto bookingSlot, Instant startDate, Instant endDate) {
+	public static boolean isThereOverlap(Interval maintenanceInterval, Instant startDate, Instant endDate) {
 
-		Interval firstInterval = new Interval();
-		Moment firstBookedMoment = getMomentFromDate(bookingSlot.getStartTime());
-		Moment secondBookedMoment = getMomentFromDate(bookingSlot.getEndTime());
-		firstInterval.setBegin(firstBookedMoment);
-		firstInterval.setEnd(secondBookedMoment);
+		Interval firstInterval = maintenanceInterval;
 
 		Interval secondInterval = new Interval();
 		Moment firstRequestedMoment = getMomentFromInstant(startDate);
@@ -106,11 +102,10 @@ public class DateUtil {
 		secondInterval.setBegin(firstRequestedMoment);
 		secondInterval.setEnd(secondRequestedMoment);
 
-		Comparator<Moment> capacityComparator = Comparator.comparing(Moment::toString, Comparator.nullsFirst(Comparator.naturalOrder()));
+		boolean endsBeforeStart=firstInterval.getEnd().getValue() >secondInterval.getBegin().getValue();
+		boolean startBeforeEnd= firstInterval.getBegin().getValue() <secondInterval.getEnd().getValue();
 
-		boolean endsBeforeStart = capacityComparator.compare(firstInterval.getEnd(),secondInterval.getBegin()) > 0;
-		boolean startBeforeEnd  = capacityComparator.compare(firstInterval.getBegin(),secondInterval.getEnd()) <0; //original
-		boolean result  =  !endsBeforeStart || startBeforeEnd;
+		boolean result  =  endsBeforeStart && startBeforeEnd;
 
 		return result;
 	}

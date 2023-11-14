@@ -31,6 +31,8 @@ public class BookingServiceImpl implements BookingService {
 
 	private Set<BookingSlotDto> maintenanceSlots;
 
+ 	private Set<Interval> bookedIntervals;
+
 	@Autowired
 	private BookingRepository bookingRepository;
 
@@ -47,6 +49,10 @@ public class BookingServiceImpl implements BookingService {
 		maxCapacity = bookingRepository.getMaxCapacity();
 		Set<BookingSlot> maintSlots = maintenanceSlotsRepository.findMaintenanceSlots();
 		maintenanceSlots =BookingMapper.bookingSlotsToBookingSlotDtos(maintSlots);
+		bookedIntervals = new HashSet<>();
+		bookedIntervals.add(new Interval(new Moment(9,0),new Moment(9,15)));
+		bookedIntervals.add(new Interval(new Moment(13,0),new Moment(13,15)));
+		bookedIntervals.add(new Interval(new Moment(17,0),new Moment(17,15)));
 	}
 
 	@Override
@@ -93,8 +99,8 @@ public class BookingServiceImpl implements BookingService {
 	}
 
 	private void checkForMaintenanceSlotOverlaps(Instant startTime, Instant endTime) {
-		BookingSlotDto slotDto=HelperUtil.checkForOverlaps(maintenanceSlots, startTime, endTime);
-		if (ObjectUtils.isNotEmpty(slotDto)){
+		Interval slot=HelperUtil.checkForOverlaps(bookedIntervals, startTime, endTime);
+		if (ObjectUtils.isNotEmpty(slot)){
 			throw new ValidationException("The selected period overlaps with one of the maintenance slots  ");
 		}
 	}
@@ -160,12 +166,12 @@ public class BookingServiceImpl implements BookingService {
 		Instant startTime = getCurrentDayInstant(listRoomsRequestDto.getStartTime());
 		Instant endTime = getCurrentDayInstant(listRoomsRequestDto.getEndTime());
 
-
-    	BookingSlotDto maintenanceSlot=HelperUtil.checkForMaintenanceSlot(maintenanceSlots, startTime, endTime);
-		if (ObjectUtils.isNotEmpty(maintenanceSlot)){
-			log.warn("Requested slot coincides with maintenance slot");
+		Interval slot=HelperUtil.checkForOverlaps(bookedIntervals, startTime, endTime);
+		if (ObjectUtils.isNotEmpty(slot)){
+			log.warn("Requested slot overlaps with maintenance slot");
 			return new HashSet<>();
 		}
+
 
 		Collection<ConferenceRoom> conferenceRooms = bookingRepository.findAllConferenceRooms();
 		Collection<ConferenceRoom> bookedConferenceRooms = bookingRepository.findConferenceRoomsByBookingSlotsBetween(DateUtil.getDateFromInstant(listRoomsRequestDto.getStartTime()), DateUtil.getDateFromInstant(listRoomsRequestDto.getEndTime()));
